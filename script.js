@@ -12,6 +12,9 @@ class SEOGenerator {
         this.clearBtn = document.getElementById('clearBtn');
         this.darkModeToggle = document.getElementById('darkModeToggle');
         this.promptTypeSelect = document.getElementById('promptType');
+        this.promptTypeGroup = document.getElementById('promptTypeGroup');
+        this.selectPagesRadio = document.getElementById('selectPagesRadio');
+        this.selectAllRadio = document.getElementById('selectAllRadio');
         this.addLocationBtn = document.getElementById('addLocationBtn');
         this.locationsContainer = document.getElementById('locationsContainer');
         this.locationLabel = document.querySelector('label[for="cityState"]');
@@ -52,6 +55,14 @@ class SEOGenerator {
             this.clearBtn.addEventListener('click', () => this.handleClearAll());
         }
         
+        if (this.selectPagesRadio) {
+            this.selectPagesRadio.addEventListener('change', () => this.handleSelectionModeChange());
+        }
+        
+        if (this.selectAllRadio) {
+            this.selectAllRadio.addEventListener('change', () => this.handleSelectionModeChange());
+        }
+        
         console.log('Event listeners attached');
         
         // Initialize features
@@ -76,7 +87,7 @@ class SEOGenerator {
     async loadInitialSheetsData() {
         console.log('loadInitialSheetsData() called');
         
-        const webAppUrl = 'https://script.google.com/macros/s/YOUR_WEBAPP_URL_HERE/exec';
+        const webAppUrl = 'https://script.google.com/macros/s/AKfycbyi_E_q_nfnxTxE8YkIf8Yewu2fFopVJC5O9zoy0xdLSDbr2Nh_aNBGMPA-LgQYfDSR/exec';
         
         try {
             console.log('Calling fetchFromWebApp with URL:', webAppUrl);
@@ -189,7 +200,7 @@ class SEOGenerator {
         
         if (!this.promptTypeSelect) return;
         
-        this.promptTypeSelect.innerHTML = '<option value="">Select section prompt...</option>';
+        this.promptTypeSelect.innerHTML = '';
         
         this.promptTypes.forEach(promptType => {
             const option = document.createElement('option');
@@ -205,6 +216,26 @@ class SEOGenerator {
             .split(' ')
             .map(word => word.charAt(0).toUpperCase() + word.slice(1))
             .join(' ');
+    }
+    
+    handleSelectionModeChange() {
+        const selectAllMode = this.selectAllRadio && this.selectAllRadio.checked;
+        
+        if (this.promptTypeGroup) {
+            if (selectAllMode) {
+                this.promptTypeGroup.style.display = 'none';
+                if (this.promptTypeSelect) {
+                    this.promptTypeSelect.required = false;
+                }
+            } else {
+                this.promptTypeGroup.style.display = 'block';
+                if (this.promptTypeSelect) {
+                    this.promptTypeSelect.required = true;
+                }
+            }
+        }
+        
+        console.log('Selection mode changed. Select All:', selectAllMode);
     }
     
     updateLocationInputLabeling(selectedPrompt) {
@@ -300,7 +331,18 @@ class SEOGenerator {
     }
     
     getFormData() {
-        const promptType = this.promptTypeSelect ? this.promptTypeSelect.value : '';
+        const selectAllMode = this.selectAllRadio && this.selectAllRadio.checked;
+        let promptType;
+        
+        if (selectAllMode) {
+            // Send all available section names
+            promptType = [...this.promptTypes];
+        } else {
+            // Get selected options from multiselect
+            const selectedOptions = Array.from(this.promptTypeSelect.selectedOptions);
+            promptType = selectedOptions.map(option => option.value);
+        }
+        
         const companyName = document.getElementById('companyName')?.value || '';
         const userName = document.getElementById('userName')?.value || '';
         const primaryService = this.primaryService?.value || '';
@@ -322,9 +364,13 @@ class SEOGenerator {
     }
     
     validateFormData(data) {
-        if (!data.promptType) {
-            this.showStatus('Please select a section prompt', 'error');
-            return false;
+        const selectAllMode = this.selectAllRadio && this.selectAllRadio.checked;
+        
+        if (!selectAllMode) {
+            if (!data.promptType || data.promptType.length === 0) {
+                this.showStatus('Please select at least one section prompt', 'error');
+                return false;
+            }
         }
         
         if (!data.companyName) {
@@ -356,7 +402,7 @@ class SEOGenerator {
     }
     
     async sendToWebhook(data) {
-        const webhookUrl = 'https://your-n8n-webhook-url.com/webhook/seo-generator';
+        const webhookUrl = 'https://bsmteam.app.n8n.cloud/webhook/fa2653da-42af-48e1-aa3d-b773ef813419';
         
         console.log('Sending to webhook:', webhookUrl);
         console.log('Data:', data);
@@ -390,7 +436,7 @@ class SEOGenerator {
     startPollingForResult() {
         console.log('Starting to poll for results...');
         
-        const webAppUrl = 'https://script.google.com/macros/s/YOUR_WEBAPP_URL_HERE/exec';
+        const webAppUrl = 'https://script.google.com/macros/s/AKfycbyi_E_q_nfnxTxE8YkIf8Yewu2fFopVJC5O9zoy0xdLSDbr2Nh_aNBGMPA-LgQYfDSR/exec';
         const pollUrl = webAppUrl + '?action=getResult';
         
         let pollCount = 0;
@@ -469,9 +515,25 @@ class SEOGenerator {
             this.form.reset();
         }
         
-        // Reset prompt type dropdown
+        // Reset prompt type dropdown selection
         if (this.promptTypeSelect) {
-            this.promptTypeSelect.selectedIndex = 0;
+            this.promptTypeSelect.selectedIndex = -1;
+        }
+        
+        // Reset radio buttons to default (Select Pages)
+        if (this.selectPagesRadio) {
+            this.selectPagesRadio.checked = true;
+        }
+        if (this.selectAllRadio) {
+            this.selectAllRadio.checked = false;
+        }
+        
+        // Show dropdown again
+        if (this.promptTypeGroup) {
+            this.promptTypeGroup.style.display = 'block';
+        }
+        if (this.promptTypeSelect) {
+            this.promptTypeSelect.required = true;
         }
         
         // Clear additional location inputs (keep only the first one)
