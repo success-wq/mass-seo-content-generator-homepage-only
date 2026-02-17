@@ -33,7 +33,8 @@ class SEOGenerator {
         this.currentPlaceholder = "Enter city and state (e.g. Rexburg, ID)";
         this.pollInterval = null; // Store polling interval reference
         this.sheetsData = {
-            sectionNames: []
+            sectionNames: [],
+            docUrlsMap: {}
         };
         
         this.init();
@@ -103,7 +104,7 @@ class SEOGenerator {
     async loadInitialSheetsData() {
         console.log('loadInitialSheetsData() called');
         
-        const webAppUrl = 'https://script.google.com/macros/s/AKfycbyi_E_q_nfnxTxE8YkIf8Yewu2fFopVJC5O9zoy0xdLSDbr2Nh_aNBGMPA-LgQYfDSR/exec';
+        const webAppUrl = 'https://script.google.com/macros/s/AKfycbw85MH_mgZm-UCixV38Ojm5B0Zu5XHLtwdX1XekiRHyjxZ4fcwHjGpKwHs2dVeFfnC1/exec';
         
         try {
             console.log('Calling fetchFromWebApp with URL:', webAppUrl);
@@ -190,7 +191,8 @@ class SEOGenerator {
         }
         
         this.sheetsData = {
-            sectionNames: jsonData.section_names
+            sectionNames: jsonData.section_names,
+            docUrlsMap: jsonData.doc_urls_map || {}
         };
         
         console.log('Mapped data:', this.sheetsData);
@@ -459,6 +461,9 @@ class SEOGenerator {
             promptType = [...this.selectedPrompts];
         }
         
+        // Build docUrls array in same order as promptType
+        const docUrls = promptType.map(section => this.sheetsData.docUrlsMap[section] || '');
+        
         const companyName = document.getElementById('companyName')?.value || '';
         const userName = document.getElementById('userName')?.value || '';
         const primaryService = this.primaryService?.value || '';
@@ -471,6 +476,7 @@ class SEOGenerator {
         
         return {
             promptType,
+            docUrls,
             companyName,
             userName,
             locations,
@@ -552,7 +558,7 @@ class SEOGenerator {
     startPollingForResult() {
         console.log('Starting to poll for results...');
         
-        const webAppUrl = 'https://script.google.com/macros/s/AKfycbyi_E_q_nfnxTxE8YkIf8Yewu2fFopVJC5O9zoy0xdLSDbr2Nh_aNBGMPA-LgQYfDSR/exec';
+        const webAppUrl = 'https://script.google.com/macros/s/AKfycbw85MH_mgZm-UCixV38Ojm5B0Zu5XHLtwdX1XekiRHyjxZ4fcwHjGpKwHs2dVeFfnC1/exec';
         const pollUrl = webAppUrl + '?action=getResult';
         
         let pollCount = 0;
