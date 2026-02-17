@@ -1,0 +1,1 @@
+# mass-seo-content-generator-homepage-only
