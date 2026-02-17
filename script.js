@@ -11,10 +11,13 @@ class SEOGenerator {
         this.submitBtn = document.getElementById('submitBtn');
         this.clearBtn = document.getElementById('clearBtn');
         this.darkModeToggle = document.getElementById('darkModeToggle');
-        this.promptTypeSelect = document.getElementById('promptType');
         this.promptTypeGroup = document.getElementById('promptTypeGroup');
         this.selectPagesRadio = document.getElementById('selectPagesRadio');
         this.selectAllRadio = document.getElementById('selectAllRadio');
+        this.multiselectSearch = document.getElementById('multiselectSearch');
+        this.multiselectDropdown = document.getElementById('multiselectDropdown');
+        this.multiselectOptions = document.getElementById('multiselectOptions');
+        this.selectedTags = document.getElementById('selectedTags');
         this.addLocationBtn = document.getElementById('addLocationBtn');
         this.locationsContainer = document.getElementById('locationsContainer');
         this.locationLabel = document.querySelector('label[for="cityState"]');
@@ -25,6 +28,7 @@ class SEOGenerator {
         // Initialize data
         this.currentMatrix = [];
         this.promptTypes = [];
+        this.selectedPrompts = []; // Track selected prompts
         this.locationCount = 1;
         this.currentPlaceholder = "Enter city and state (e.g. Rexburg, ID)";
         this.pollInterval = null; // Store polling interval reference
@@ -62,6 +66,18 @@ class SEOGenerator {
         if (this.selectAllRadio) {
             this.selectAllRadio.addEventListener('change', () => this.handleSelectionModeChange());
         }
+        
+        if (this.multiselectSearch) {
+            this.multiselectSearch.addEventListener('focus', () => this.showDropdown());
+            this.multiselectSearch.addEventListener('input', (e) => this.filterOptions(e.target.value));
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!this.promptTypeGroup?.contains(e.target)) {
+                this.hideDropdown();
+            }
+        });
         
         console.log('Event listeners attached');
         
@@ -198,16 +214,123 @@ class SEOGenerator {
     updatePromptTypeOptions() {
         console.log('updatePromptTypeOptions called with:', this.promptTypes);
         
-        if (!this.promptTypeSelect) return;
+        if (!this.multiselectOptions) return;
         
-        this.promptTypeSelect.innerHTML = '';
+        this.multiselectOptions.innerHTML = '';
         
         this.promptTypes.forEach(promptType => {
-            const option = document.createElement('option');
-            option.value = promptType;
+            const option = document.createElement('div');
+            option.className = 'multiselect-option';
             option.textContent = this.formatPromptTypeName(promptType);
-            this.promptTypeSelect.appendChild(option);
+            option.dataset.value = promptType;
+            
+            option.addEventListener('click', () => this.toggleSelection(promptType));
+            
+            this.multiselectOptions.appendChild(option);
             console.log(`Added option: ${promptType}`);
+        });
+    }
+    
+    showDropdown() {
+        if (this.multiselectDropdown) {
+            this.multiselectDropdown.style.display = 'block';
+        }
+    }
+    
+    hideDropdown() {
+        if (this.multiselectDropdown) {
+            this.multiselectDropdown.style.display = 'none';
+        }
+    }
+    
+    toggleSelection(promptType) {
+        const index = this.selectedPrompts.indexOf(promptType);
+        
+        if (index > -1) {
+            // Remove from selection
+            this.selectedPrompts.splice(index, 1);
+        } else {
+            // Add to selection
+            this.selectedPrompts.push(promptType);
+        }
+        
+        this.updateSelectedTags();
+        this.updateDropdownSelections();
+        
+        console.log('Selected prompts:', this.selectedPrompts);
+    }
+    
+    removeSelection(promptType) {
+        const index = this.selectedPrompts.indexOf(promptType);
+        if (index > -1) {
+            this.selectedPrompts.splice(index, 1);
+            this.updateSelectedTags();
+            this.updateDropdownSelections();
+        }
+    }
+    
+    updateSelectedTags() {
+        if (!this.selectedTags) return;
+        
+        this.selectedTags.innerHTML = '';
+        
+        this.selectedPrompts.forEach(promptType => {
+            const tag = document.createElement('div');
+            tag.className = 'selected-tag';
+            
+            const tagText = document.createElement('span');
+            tagText.textContent = this.formatPromptTypeName(promptType);
+            
+            const removeBtn = document.createElement('span');
+            removeBtn.className = 'remove-tag';
+            removeBtn.innerHTML = '×';
+            removeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.removeSelection(promptType);
+            });
+            
+            tag.appendChild(tagText);
+            tag.appendChild(removeBtn);
+            this.selectedTags.appendChild(tag);
+        });
+        
+        // Update placeholder
+        if (this.multiselectSearch) {
+            if (this.selectedPrompts.length === 0) {
+                this.multiselectSearch.placeholder = 'Choose pages...';
+            } else {
+                this.multiselectSearch.placeholder = 'Search or add more...';
+            }
+        }
+    }
+    
+    updateDropdownSelections() {
+        if (!this.multiselectOptions) return;
+        
+        const options = this.multiselectOptions.querySelectorAll('.multiselect-option');
+        options.forEach(option => {
+            const value = option.dataset.value;
+            if (this.selectedPrompts.includes(value)) {
+                option.classList.add('selected');
+            } else {
+                option.classList.remove('selected');
+            }
+        });
+    }
+    
+    filterOptions(searchTerm) {
+        if (!this.multiselectOptions) return;
+        
+        const options = this.multiselectOptions.querySelectorAll('.multiselect-option');
+        const lowerSearch = searchTerm.toLowerCase();
+        
+        options.forEach(option => {
+            const text = option.textContent.toLowerCase();
+            if (text.includes(lowerSearch)) {
+                option.style.display = 'block';
+            } else {
+                option.style.display = 'none';
+            }
         });
     }
     
@@ -224,14 +347,8 @@ class SEOGenerator {
         if (this.promptTypeGroup) {
             if (selectAllMode) {
                 this.promptTypeGroup.style.display = 'none';
-                if (this.promptTypeSelect) {
-                    this.promptTypeSelect.required = false;
-                }
             } else {
                 this.promptTypeGroup.style.display = 'block';
-                if (this.promptTypeSelect) {
-                    this.promptTypeSelect.required = true;
-                }
             }
         }
         
@@ -338,9 +455,8 @@ class SEOGenerator {
             // Send all available section names
             promptType = [...this.promptTypes];
         } else {
-            // Get selected options from multiselect
-            const selectedOptions = Array.from(this.promptTypeSelect.selectedOptions);
-            promptType = selectedOptions.map(option => option.value);
+            // Get selected prompts from our custom multiselect
+            promptType = [...this.selectedPrompts];
         }
         
         const companyName = document.getElementById('companyName')?.value || '';
@@ -515,9 +631,12 @@ class SEOGenerator {
             this.form.reset();
         }
         
-        // Reset prompt type dropdown selection
-        if (this.promptTypeSelect) {
-            this.promptTypeSelect.selectedIndex = -1;
+        // Clear multiselect selections
+        this.selectedPrompts = [];
+        this.updateSelectedTags();
+        this.updateDropdownSelections();
+        if (this.multiselectSearch) {
+            this.multiselectSearch.value = '';
         }
         
         // Reset radio buttons to default (Select Pages)
@@ -531,9 +650,6 @@ class SEOGenerator {
         // Show dropdown again
         if (this.promptTypeGroup) {
             this.promptTypeGroup.style.display = 'block';
-        }
-        if (this.promptTypeSelect) {
-            this.promptTypeSelect.required = true;
         }
         
         // Clear additional location inputs (keep only the first one)
