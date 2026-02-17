@@ -23,13 +23,29 @@
         </header>
         <div class="form-container">
             <form id="seoForm">
-                <!-- Section Prompt Selection -->
+                <!-- Selection Mode Radio Buttons -->
                 <div class="form-group">
-                    <label for="promptType">Select Section Prompt</label>
-                    <select id="promptType" required>
-                        <option value="">Loading section prompts...</option>
+                    <label>Selection Mode</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="selectionMode" value="pages" id="selectPagesRadio" checked>
+                            <span>Select Pages</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="selectionMode" value="all" id="selectAllRadio">
+                            <span>Select All</span>
+                        </label>
+                    </div>
+                    <small>Choose to select specific pages or all pages</small>
+                </div>
+                
+                <!-- Section Prompt Selection (Multiselect) -->
+                <div class="form-group" id="promptTypeGroup">
+                    <label for="promptType">Select Section Prompt(s)</label>
+                    <select id="promptType" multiple size="8" required>
+                        <option value="" disabled>Loading section prompts...</option>
                     </select>
-                    <small>Section prompts will be loaded via webhook</small>
+                    <small>Hold Ctrl (Cmd on Mac) to select multiple. Section prompts will be loaded via webhook</small>
                 </div>
                 <!-- Company Name Input -->
                 <div class="form-group">
