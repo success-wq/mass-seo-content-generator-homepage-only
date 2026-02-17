@@ -529,15 +529,13 @@ class SEOGenerator {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                mode: 'no-cors',
                 body: JSON.stringify(data)
             });
             
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const result = await response.json();
-            console.log('Webhook response:', result);
+            // With no-cors, response is opaque - we can't read it, but the request goes through
+            // Results are retrieved via polling instead
+            console.log('Webhook request sent (no-cors mode)');
             
             this.showStatus('Request submitted successfully! Polling for results...', 'success');
             
