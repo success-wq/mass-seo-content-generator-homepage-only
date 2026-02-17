@@ -1,0 +1,116 @@
+<!--v7-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO Content Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div>
+                    <h1>SEO Content Generator</h1>
+                    <p>Generate SEO Content for pages via AI prompt - BSM exclusive</p>
+                </div>
+                <button id="darkModeToggle" class="dark-mode-toggle" title="Toggle dark mode">
+                    <span class="sun-icon">☀️</span>
+                    <span class="moon-icon">🌙</span>
+                </button>
+            </div>
+        </header>
+        <div class="form-container">
+            <form id="seoForm">
+                <!-- Section Prompt Selection -->
+                <div class="form-group">
+                    <label for="promptType">Select Section Prompt</label>
+                    <select id="promptType" required>
+                        <option value="">Loading section prompts...</option>
+                    </select>
+                    <small>Section prompts will be loaded via webhook</small>
+                </div>
+                <!-- Company Name Input -->
+                <div class="form-group">
+                    <label for="companyName">Company Name</label>
+                    <input 
+                        type="text" 
+                        id="companyName" 
+                        placeholder="Enter your company name"
+                        required
+                    >
+                    <small>Enter your company name for page generation</small>
+                </div>
+                <!-- User Input -->
+                <div class="form-group">
+                    <label for="userName">User</label>
+                    <input 
+                        type="text" 
+                        id="userName" 
+                        placeholder="Enter your name"
+                        required
+                    >
+                    <small>Enter your name for identification</small>
+                </div>
+                <!-- City and State Input -->
+                <div class="form-group location-group">
+                    <label for="cityState">City + State</label>
+                    <div id="locationsContainer">
+                        <div class="location-input-group">
+                            <input 
+                                type="text" 
+                                id="cityState" 
+                                placeholder="Enter city and state (e.g. Rexburg, ID)"
+                                required
+                            >
+                            <button type="button" id="addLocationBtn" class="add-location-btn">Add More Locations</button>
+                        </div>
+                    </div>
+                    <small id="locationHelpText">Enter the primary city and state for your service area. Items must be separated by commas (,) as shown in the example.</small>
+                </div>
+                <!-- Primary Service Input -->
+                <div class="form-group">
+                    <label for="primaryService">Primary Service</label>
+                    <input 
+                        type="text" 
+                        id="primaryService" 
+                        placeholder="e.g., Window Replacement and Door Installation"
+                        required
+                    >
+                    <small>Enter your primary service offering</small>
+                </div>
+                <!-- Phone Number Input -->
+                <div class="form-group">
+                    <label for="phoneNumber">Phone Number</label>
+                    <input 
+                        type="tel" 
+                        id="phoneNumber" 
+                        placeholder="Enter phone number"
+                        required
+                    >
+                    <small>Enter your business phone number</small>
+                </div>
+                <!-- Submit and Clear Buttons -->
+                <div class="button-group">
+                    <button type="submit" id="submitBtn">
+                        <span class="btn-text">Generate Matrix</span>
+                        <span class="loader" style="display: none;"></span>
+                    </button>
+                    <button type="button" id="clearBtn" class="clear-btn" disabled>
+                        Clear All
+                    </button>
+                </div>
+            </form>
+        </div>
+        <!-- Results Section -->
+        <div id="results" class="results-section" style="display: none;">
+            <h2></h2>
+            <div id="webhookResponse"></div>
+        </div>
+        <!-- Status Messages -->
+        <div id="statusMessage" class="status-message" style="display: none;"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
