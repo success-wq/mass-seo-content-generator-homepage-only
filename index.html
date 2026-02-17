@@ -39,13 +39,25 @@
                     <small>Choose to select specific pages or all pages</small>
                 </div>
                 
-                <!-- Section Prompt Selection (Multiselect) -->
+                <!-- Section Prompt Selection (Tag-based Multiselect) -->
                 <div class="form-group" id="promptTypeGroup">
                     <label for="promptType">Select Section Prompt(s)</label>
-                    <select id="promptType" multiple size="8" required>
-                        <option value="" disabled>Loading section prompts...</option>
-                    </select>
-                    <small>Hold Ctrl (Cmd on Mac) to select multiple. Section prompts will be loaded via webhook</small>
+                    <div class="multiselect-container">
+                        <div class="selected-tags" id="selectedTags"></div>
+                        <div class="multiselect-input-wrapper">
+                            <input 
+                                type="text" 
+                                id="multiselectSearch" 
+                                class="multiselect-search"
+                                placeholder="Choose pages..."
+                                autocomplete="off"
+                            >
+                            <div class="multiselect-dropdown" id="multiselectDropdown" style="display: none;">
+                                <div id="multiselectOptions"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <small>Section prompts will be loaded via webhook</small>
                 </div>
                 <!-- Company Name Input -->
                 <div class="form-group">
