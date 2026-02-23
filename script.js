@@ -524,7 +524,7 @@ class SEOGenerator {
     }
     
     async sendToWebhook(data) {
-        const webhookUrl = 'https://bsmteam.app.n8n.cloud/webhook/fa2653da-42af-48e1-aa3d-b773ef813419';
+        const webhookUrl = 'https://bsmteam.app.n8n.cloud/webhook/748785ad-ea00-429b-8071-28ebd3756200';
         
         console.log('Sending to webhook:', webhookUrl);
         console.log('Data:', data);
