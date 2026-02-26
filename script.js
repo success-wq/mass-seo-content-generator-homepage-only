@@ -104,7 +104,7 @@ class SEOGenerator {
     async loadInitialSheetsData() {
         console.log('loadInitialSheetsData() called');
         
-        const webAppUrl = 'https://script.google.com/macros/s/AKfycbw85MH_mgZm-UCixV38Ojm5B0Zu5XHLtwdX1XekiRHyjxZ4fcwHjGpKwHs2dVeFfnC1/exec';
+        const webAppUrl = '';
         
         try {
             console.log('Calling fetchFromWebApp with URL:', webAppUrl);
@@ -558,7 +558,7 @@ class SEOGenerator {
     startPollingForResult() {
         console.log('Starting to poll for results...');
         
-        const webAppUrl = 'https://script.google.com/macros/s/AKfycbw85MH_mgZm-UCixV38Ojm5B0Zu5XHLtwdX1XekiRHyjxZ4fcwHjGpKwHs2dVeFfnC1/exec';
+        const webAppUrl = 'https://script.google.com/macros/s/AKfycbyfRLYsXOB_pe1_XaDMbTJ2O8yB2NcEymEAz56yWysxT20O9wUv6haxb61L4eBwr2T9/exec';
         const pollUrl = webAppUrl + '?action=getResult';
         
         let pollCount = 0;
