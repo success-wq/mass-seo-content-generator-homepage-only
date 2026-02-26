@@ -104,7 +104,7 @@ class SEOGenerator {
     async loadInitialSheetsData() {
         console.log('loadInitialSheetsData() called');
         
-        const webAppUrl = '';
+        const webAppUrl = 'https://script.google.com/macros/s/AKfycbzTy7V2gbHVyq2ZSSUcjvhQVKTN_rNZTmUYGkxxtS5w57dKKeBueOh3F859Ks6lszZx/exec';
         
         try {
             console.log('Calling fetchFromWebApp with URL:', webAppUrl);
