@@ -542,7 +542,7 @@ class SEOGenerator {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             
-            const result = await response.json();
+            const result = await response.text();
             console.log('Webhook response:', result);
             
             this.showStatus('Request submitted successfully! Polling for results...', 'success');
