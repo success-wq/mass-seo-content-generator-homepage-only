@@ -558,7 +558,7 @@ class SEOGenerator {
     startPollingForResult() {
         console.log('Starting to poll for results...');
         
-        const webAppUrl = 'https://script.google.com/macros/s/AKfycbyfRLYsXOB_pe1_XaDMbTJ2O8yB2NcEymEAz56yWysxT20O9wUv6haxb61L4eBwr2T9/exec';
+        const webAppUrl = 'https://script.google.com/macros/s/AKfycbzTy7V2gbHVyq2ZSSUcjvhQVKTN_rNZTmUYGkxxtS5w57dKKeBueOh3F859Ks6lszZx/exec';
         const pollUrl = webAppUrl + '?action=getResult';
         
         let pollCount = 0;
